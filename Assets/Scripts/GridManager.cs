@@ -13,11 +13,9 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private GameObject prefabCell;
     [SerializeField] private GridLayoutGroup gridLayoutGroup;
-    [SerializeField] private NotiEditCells notiEditCells;
 
     public void CreateGrid(int x, int y)
     {
-        notiEditCells.Show();
 
         gridLayoutGroup.constraintCount = x;
 
@@ -33,12 +31,12 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal void DisableCellButtons()
+    internal void ToggleButtons(bool isEdit)
     {
         var childCount = transform.childCount;
         for (int i = 0; i< childCount; i++)
         {
-            transform.GetChild(i).GetComponent<Button>().interactable = false;
+            transform.GetChild(i).GetComponent<Button>().interactable = isEdit;
         }
     }
 }
