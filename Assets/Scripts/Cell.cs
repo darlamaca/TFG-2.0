@@ -18,6 +18,7 @@ public class Cell : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tmpGCost;
     [SerializeField] private TextMeshProUGUI tmpHCost;
     [SerializeField] private TextMeshProUGUI tmpFCost;
+    public GridManager Parent;
 
     public int X;
     public int Y;
@@ -31,8 +32,22 @@ public class Cell : MonoBehaviour
 
     private void Start()
     {
-        updateCell();
-        btnChangeType.onClick.AddListener(changeCellType);
+        UpdateCell();
+        btnChangeType.onClick.AddListener(onClickCell);
+    }
+
+    private void onClickCell() {
+        var state = Parent.GetEditState();
+        switch (state) {
+            case NotiEditCells.State.Edit:{
+                changeCellType();
+                break;
+            }
+            case NotiEditCells.State.Rob:{
+                setRobot();
+                break;
+            }
+        }        
     }
 
     private void changeCellType()
@@ -43,10 +58,20 @@ public class Cell : MonoBehaviour
 
         type = (CellType)Enum.GetValues(typeof(CellType)).GetValue(nextType);
 
-        updateCell();
+        UpdateCell();
     }
 
-    private void updateCell()
+    public void SetIsRobot(bool isRobot) {
+        this.isRobot = isRobot;
+    }
+    
+    private void setRobot() {
+        Parent.NoRobot();
+        isRobot = true;
+        UpdateCell();
+    }
+
+    public void UpdateCell()
     {
         tmpType.text = type.ToString();
         imgBackground.color = colorsByType[(int)type];

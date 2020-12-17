@@ -12,23 +12,51 @@ public class NotiEditCells : MonoBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private TextMeshProUGUI tmpBody;
 
-    private const string strEdit = "Editar mapa";
-    private const string strFix = "Fixar mapa";
-    private bool isEdit = true;
+    private const string strEdit = "Fixar mapa";
+    private const string strRob = "Fixar robot";
+    private const string strFix = "Editar mapa";
+    private State state = State.Edit;
+    public enum State {Edit, Rob, Fix};
 
     private void Start() 
     {
         btnConfirm.onClick.AddListener(changeEditing);
-        tmpBody.text = strFix;
+        tmpBody.text = strEdit;
     }
 
     private void changeEditing()
     {
-        isEdit = !isEdit;
-        gridManager.ToggleButtons(isEdit);
-        tmpBody.text = (isEdit)? strFix : strEdit;
+        var statesCount = Enum.GetNames(typeof(State)).Length;
+        int nextState = (int)state + 1;
+        if (nextState == statesCount) nextState = 0;
+
+        state = (State)Enum.GetValues(typeof(State)).GetValue(nextState);
+
+        updateState();
     }
 
+    private void updateState() {
+        gridManager.ToggleButtons(state == State.Edit || state == State.Rob);
+        switch (state) {
+            case State.Edit:{
+                tmpBody.text = strEdit;
+                break;
+            }
+            case State.Rob:{
+                tmpBody.text = strRob;
+                break;
+            }
+            case State.Fix:{
+                tmpBody.text = strFix;
+                break;
+            }
+        }
+    }
+
+    public State GetState() {
+        return state;
+    }
+    
     public void Hide()
     {
         canvas.enabled = false;

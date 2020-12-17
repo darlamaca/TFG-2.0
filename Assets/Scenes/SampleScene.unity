@@ -987,6 +987,7 @@ MonoBehaviour:
   prefabCell: {fileID: 2021552200563855085, guid: 8b41b83eedc4f87b88a72eed39c5d120,
     type: 3}
   gridLayoutGroup: {fileID: 1137311185}
+  notiEditCells: {fileID: 1546670575}
 --- !u!114 &1137311185
 MonoBehaviour:
   m_ObjectHideFlags: 0

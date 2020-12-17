@@ -13,6 +13,8 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private GameObject prefabCell;
     [SerializeField] private GridLayoutGroup gridLayoutGroup;
+    [SerializeField] private NotiEditCells notiEditCells;
+
 
     public void CreateGrid(int x, int y)
     {
@@ -27,16 +29,31 @@ public class GridManager : MonoBehaviour
             newCell.transform.SetParent(this.transform, false);
             newCell.GetComponent<Cell>().X = i/x;
             newCell.GetComponent<Cell>().Y = i%x;
+            newCell.GetComponent<Cell>().Parent = this;
             listCell.Add(newCell.GetComponent<Cell>());
         }
     }
 
-    internal void ToggleButtons(bool isEdit)
+    public void ToggleButtons(bool isEdit)
     {
         var childCount = transform.childCount;
         for (int i = 0; i< childCount; i++)
         {
             transform.GetChild(i).GetComponent<Button>().interactable = isEdit;
         }
+    }
+
+    public void NoRobot()
+    {
+        var childCount = transform.childCount;
+        for (int i = 0; i< childCount; i++)
+        {
+            transform.GetChild(i).GetComponent<Cell>().SetIsRobot(false);
+            transform.GetChild(i).GetComponent<Cell>().UpdateCell();
+        }
+    }
+
+    public NotiEditCells.State GetEditState() {
+        return notiEditCells.GetState();
     }
 }
