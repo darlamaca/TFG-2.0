@@ -3,18 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Cell : MonoBehaviour
 {
     private enum CellType { Floor, Wall, Obstacle }
     
-    [SerializeField] private int[] weightsByType;
     [SerializeField] private Color[] colorsByType;
     
     [SerializeField] private Image imgBackground;
+    [SerializeField] private Image imgRobot;
     [SerializeField] private Button btnChangeType;
-    [SerializeField] private Text tType;
-    [SerializeField] private Text tWeight;
+    [SerializeField] private TextMeshProUGUI tmpType;
+    [SerializeField] private TextMeshProUGUI tmpGCost;
+    [SerializeField] private TextMeshProUGUI tmpHCost;
+    [SerializeField] private TextMeshProUGUI tmpFCost;
+
+    public int X;
+    public int Y;
+    private int gCost;
+    private int hCost;
+    private int fCost;
+    private bool isRobot;
+
 
     private CellType type = CellType.Floor;
 
@@ -37,8 +48,8 @@ public class Cell : MonoBehaviour
 
     private void updateCell()
     {
-        tType.text = type.ToString();
-        tWeight.text = weightsByType[(int)type].ToString();
+        tmpType.text = type.ToString();
         imgBackground.color = colorsByType[(int)type];
+        imgRobot.enabled = isRobot;
     }
 }

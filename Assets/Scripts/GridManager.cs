@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
 {
     public int MaxGridValue;
     public int MinGridValue;
+    private List<Cell> listCell = new List<Cell>();
 
 
     [SerializeField] private GameObject prefabCell;
@@ -24,8 +25,11 @@ public class GridManager : MonoBehaviour
 
         for (int i = 0; i < totalGridCells; i++)
         {
-            GameObject newPlayer = Instantiate(prefabCell);
-            newPlayer.transform.SetParent(this.transform, false);
+            GameObject newCell = Instantiate(prefabCell);
+            newCell.transform.SetParent(this.transform, false);
+            newCell.GetComponent<Cell>().X = i/x;
+            newCell.GetComponent<Cell>().Y = i%x;
+            listCell.Add(newCell.GetComponent<Cell>());
         }
     }
 
