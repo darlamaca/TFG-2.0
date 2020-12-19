@@ -14,7 +14,6 @@ public class Cell : MonoBehaviour
     [SerializeField] private Image imgBackground;
     [SerializeField] private Image imgRobot;
     [SerializeField] private Button btnChangeType;
-    [SerializeField] private TextMeshProUGUI tmpType;
     [SerializeField] private TextMeshProUGUI tmpGCost;
     [SerializeField] private TextMeshProUGUI tmpHCost;
     [SerializeField] private TextMeshProUGUI tmpFCost;
@@ -73,7 +72,6 @@ public class Cell : MonoBehaviour
 
     public void UpdateCell()
     {
-        tmpType.text = type.ToString();
         imgBackground.color = colorsByType[(int)type];
         imgRobot.enabled = isRobot;
     }
