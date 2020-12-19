@@ -7,7 +7,7 @@ using TMPro;
 
 public class Cell : MonoBehaviour
 {
-    private enum CellType { Floor, Wall, Obstacle }
+    private enum CellType { Floor, Wall, Obstacle, Charge }
     
     [SerializeField] private Color[] colorsByType;
     
