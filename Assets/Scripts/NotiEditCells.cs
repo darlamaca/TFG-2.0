@@ -9,7 +9,6 @@ public class NotiEditCells : MonoBehaviour
 {
     [SerializeField] private Button btnConfirm;
     [SerializeField] private Canvas canvas;
-    [SerializeField] private GridManager gridManager;
     [SerializeField] private TextMeshProUGUI tmpBody;
 
     private const string strEdit = "Fixar mapa";
@@ -36,7 +35,7 @@ public class NotiEditCells : MonoBehaviour
     }
 
     private void updateState() {
-        gridManager.ToggleButtons(state == State.Edit || state == State.Rob);
+        GridManager.Instance.ToggleButtons(state == State.Edit || state == State.Rob);
         switch (state) {
             case State.Edit:{
                 tmpBody.text = strEdit;

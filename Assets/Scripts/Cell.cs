@@ -17,7 +17,6 @@ public class Cell : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tmpGCost;
     [SerializeField] private TextMeshProUGUI tmpHCost;
     [SerializeField] private TextMeshProUGUI tmpFCost;
-    public GridManager Parent;
 
     public int X;
     public int Y;
@@ -36,7 +35,7 @@ public class Cell : MonoBehaviour
     }
 
     private void onClickCell() {
-        var state = Parent.GetEditState();
+        var state = GridManager.Instance.GetEditState();
         switch (state) {
             case NotiEditCells.State.Edit:{
                 changeCellType();
@@ -65,7 +64,7 @@ public class Cell : MonoBehaviour
     }
     
     private void setRobot() {
-        Parent.NoRobot();
+        GridManager.Instance.NoRobot();
         isRobot = true;
         UpdateCell();
     }

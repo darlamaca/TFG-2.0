@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class NotiGridSize : MonoBehaviour
 {
-    [SerializeField] private GridManager gridManager;
     [SerializeField] private Canvas canvas;
     [SerializeField] private InputField ifGridX;
     [SerializeField] private InputField ifGridY;
@@ -27,17 +26,17 @@ public class NotiGridSize : MonoBehaviour
         if (xIsNumber && yIsNumber && isValid(x) && isValid(y))
         {
             Hide();
-            gridManager.CreateGrid(x, y);
+            GridManager.Instance.CreateGrid(x, y);
         }
         else
         {
-            tError.text = String.Format("ERROR: Values are invalid.\nX and Y must be numbers between [{0}, {1}]", gridManager.MinGridValue, gridManager.MaxGridValue);
+            tError.text = String.Format("ERROR: Values are invalid.\nX and Y must be numbers between [{0}, {1}]", GridManager.Instance.MinGridValue, GridManager.Instance.MaxGridValue);
         }
     }
 
     private bool isValid(int n)
     {
-        return n >= gridManager.MinGridValue && n <= gridManager.MaxGridValue;
+        return n >= GridManager.Instance.MinGridValue && n <= GridManager.Instance.MaxGridValue;
     }
 
     private void Hide()

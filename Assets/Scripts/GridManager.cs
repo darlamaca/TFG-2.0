@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
+    public static GridManager Instance = null;
     public int MaxGridValue;
     public int MinGridValue;
     private List<Cell> listCell = new List<Cell>();
@@ -15,7 +16,10 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GridLayoutGroup gridLayoutGroup;
     [SerializeField] private NotiEditCells notiEditCells;
 
-
+    private void Awake() {
+        if (Instance == null) Instance = this;
+    }
+    
     public void CreateGrid(int x, int y)
     {
 
@@ -29,7 +33,6 @@ public class GridManager : MonoBehaviour
             newCell.transform.SetParent(this.transform, false);
             newCell.GetComponent<Cell>().X = i/x;
             newCell.GetComponent<Cell>().Y = i%x;
-            newCell.GetComponent<Cell>().Parent = this;
             listCell.Add(newCell.GetComponent<Cell>());
         }
     }
