@@ -42,7 +42,7 @@ public class Cell : MonoBehaviour
                 break;
             }
             case NotiEditCells.State.Rob:{
-                setRobot();
+                RobotManager.Instance.SetRobotTo(X,Y);
                 break;
             }
         }        
@@ -59,16 +59,11 @@ public class Cell : MonoBehaviour
         UpdateCell();
     }
 
-    public void SetIsRobot(bool isRobot) {
+    public void SetRobot(bool isRobot) {
         this.isRobot = isRobot;
-    }
-    
-    private void setRobot() {
-        GridManager.Instance.NoRobot();
-        isRobot = true;
         UpdateCell();
     }
-
+    
     public void UpdateCell()
     {
         imgBackground.color = colorsByType[(int)type];

@@ -46,14 +46,8 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void NoRobot()
-    {
-        var childCount = transform.childCount;
-        for (int i = 0; i< childCount; i++)
-        {
-            transform.GetChild(i).GetComponent<Cell>().SetIsRobot(false);
-            transform.GetChild(i).GetComponent<Cell>().UpdateCell();
-        }
+    public Cell GetCell(int x, int y) {
+        return listCell.Find(cell => cell.X == x && cell.Y == y);
     }
 
     public NotiEditCells.State GetEditState() {
