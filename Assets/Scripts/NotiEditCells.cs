@@ -16,6 +16,7 @@ public class NotiEditCells : MonoBehaviour
     private const string strFix = "Editar mapa";
     private State state = State.Edit;
     public enum State {Edit, Rob, Fix};
+    public event Action<State> OnUpdateState;
 
     private void Start() 
     {
@@ -36,6 +37,7 @@ public class NotiEditCells : MonoBehaviour
 
     private void updateState() {
         GridManager.Instance.ToggleButtons(state == State.Edit || state == State.Rob);
+        OnUpdateState?.Invoke(state);
         switch (state) {
             case State.Edit:{
                 tmpBody.text = strEdit;

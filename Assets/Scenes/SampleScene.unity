@@ -1099,7 +1099,7 @@ GameObject:
   - component: {fileID: 644816732}
   - component: {fileID: 644816731}
   m_Layer: 5
-  m_Name: ButtonReset
+  m_Name: ButtonRefresh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1419,6 +1419,7 @@ GameObject:
   - component: {fileID: 1052163876}
   - component: {fileID: 1052163875}
   - component: {fileID: 1052163874}
+  - component: {fileID: 1052163873}
   m_Layer: 5
   m_Name: Noti_RobotControl
   m_TagString: Untagged
@@ -1449,6 +1450,22 @@ RectTransform:
   m_AnchoredPosition: {x: -32, y: 0}
   m_SizeDelta: {x: 384, y: 384}
   m_Pivot: {x: 1, y: 0.5}
+--- !u!114 &1052163873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052163871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 984db397878ce8e46bcd9cb3297b1da0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btnPlay: {fileID: 609548864}
+  btnPause: {fileID: 165973117}
+  btnRefresh: {fileID: 644816731}
+  notiEditCells: {fileID: 1546670575}
 --- !u!114 &1052163874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1473,7 +1490,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1052163871}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
