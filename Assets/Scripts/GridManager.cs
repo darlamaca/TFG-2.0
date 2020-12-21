@@ -53,4 +53,22 @@ public class GridManager : MonoBehaviour
     public NotiEditCells.State GetEditState() {
         return notiEditCells.GetState();
     }
+
+    public bool FinishedCleaning() {
+        return listCell.Find(cell => cell.GetCellType() == Cell.CellType.Floor && cell.GetTimesPassed() == 0) == null;
+    }
+
+    public Cell GetNextRowCell(int x, int y) {
+        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor && cell.GetCellType() == Cell.CellType.Charge);
+        if(allRowCell != null && allRowCell.Count > 0) {
+            var cellsCount = allRowCell.Count;
+            if(allRowCell[0].X - x < allRowCell[cellsCount - 1].X - x) {
+                return allRowCell[0];
+            }
+            else {
+                return allRowCell[cellsCount - 1];
+            }
+        }
+        return null;
+    }
 }

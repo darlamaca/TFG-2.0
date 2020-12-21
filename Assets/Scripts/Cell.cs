@@ -7,7 +7,7 @@ using TMPro;
 
 public class Cell : MonoBehaviour
 {
-    private enum CellType { Floor, Wall, Obstacle, Charge }
+    public enum CellType { Floor, Wall, Obstacle, Charge }
     
     [SerializeField] private Color[] colorsByType;
     
@@ -24,6 +24,7 @@ public class Cell : MonoBehaviour
     private int hCost;
     private int fCost;
     private bool isRobot;
+    private int timesPassed;
 
 
     private CellType type = CellType.Floor;
@@ -61,6 +62,7 @@ public class Cell : MonoBehaviour
 
     public void SetRobot(bool isRobot) {
         this.isRobot = isRobot;
+        IncreaseTimesPassed();
         UpdateCell();
     }
     
@@ -68,5 +70,17 @@ public class Cell : MonoBehaviour
     {
         imgBackground.color = colorsByType[(int)type];
         imgRobot.enabled = isRobot;
+    }
+
+    public void IncreaseTimesPassed() {
+        timesPassed ++;
+    }
+
+    public int GetTimesPassed() {
+        return timesPassed;
+    }
+
+    public CellType GetCellType() {
+        return type;
     }
 }

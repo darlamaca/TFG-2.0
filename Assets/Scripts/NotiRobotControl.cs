@@ -19,7 +19,7 @@ public class NotiRobotControl : MonoBehaviour
     }
 
     private void onClickPlay() {
-        Debug.Log("Play");
+        RobotManager.Instance.Clean();
     }
 
     private void onClickPause() {
