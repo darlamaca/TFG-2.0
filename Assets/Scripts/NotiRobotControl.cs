@@ -27,7 +27,8 @@ public class NotiRobotControl : MonoBehaviour
     }
 
     private void onClickRefresh() {
-        Debug.Log("Refresh");
+        GridManager.Instance.Reset();
+        RobotManager.Instance.Reset();
     }
 
     private void onUpdateState(NotiEditCells.State state) {

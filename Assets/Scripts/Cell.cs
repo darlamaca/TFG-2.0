@@ -13,10 +13,9 @@ public class Cell : MonoBehaviour
     
     [SerializeField] private Image imgBackground;
     [SerializeField] private Image imgRobot;
+    [SerializeField] private TextMeshProUGUI tmpPosition;
+    [SerializeField] private TextMeshProUGUI tmpTimesPassed;
     [SerializeField] private Button btnChangeType;
-    [SerializeField] private TextMeshProUGUI tmpGCost;
-    [SerializeField] private TextMeshProUGUI tmpHCost;
-    [SerializeField] private TextMeshProUGUI tmpFCost;
 
     public int X;
     public int Y;
@@ -70,6 +69,8 @@ public class Cell : MonoBehaviour
     {
         imgBackground.color = colorsByType[(int)type];
         imgRobot.enabled = isRobot;
+        tmpPosition.text = ToString();
+        tmpTimesPassed.text = timesPassed.ToString();
     }
 
     public void IncreaseTimesPassed() {
@@ -111,5 +112,16 @@ public class Cell : MonoBehaviour
 
     public bool IsWalkable() {
         return type == CellType.Floor || type == CellType.Charge;
+    }
+
+    public void ResetTimesPassed()
+    {
+        timesPassed = 0;
+    }
+
+    public void ResetGraphic()
+    {
+        isRobot = false;
+        UpdateCell();
     }
 }

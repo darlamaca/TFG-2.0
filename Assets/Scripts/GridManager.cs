@@ -87,4 +87,16 @@ public class GridManager : MonoBehaviour
             listCell[i].CameFromCell = null;
         }
     }
+
+    public void Reset()
+    {
+        var listCount = listCell.Count;
+        for (int i = 0; i < listCount; i++) {
+            listCell[i].SetGCost(int.MaxValue);
+            listCell[i].CalculateFCost();
+            listCell[i].CameFromCell = null;
+            listCell[i].ResetTimesPassed();
+            listCell[i].ResetGraphic();            
+        }
+    }
 }

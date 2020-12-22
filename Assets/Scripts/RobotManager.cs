@@ -17,6 +17,14 @@ public class RobotManager : MonoBehaviour
         if (Instance == null) Instance = this;
     }
 
+    public void Reset()
+    {
+        currentCell = cellPath[0];
+        direction = 1;
+        cellPath = new List<Cell>();
+        SetRobotTo(currentCell.X, currentCell.Y);
+    }
+
     public void SetRobotTo(int x, int y) {
         if (currentCell != null) currentCell.SetRobot(false);
         currentCell = GridManager.Instance.GetCell(x,y);
@@ -79,9 +87,6 @@ public class RobotManager : MonoBehaviour
     }
 
     private void addCellsToPath(List<Cell> cells) {
-        if (cells == null) {
-            return;
-        }
         var count = cells.Count;
         for(int i = 0; i < count; i++){
             var cell = cells[i];
@@ -100,7 +105,7 @@ public class RobotManager : MonoBehaviour
 
         while (openList.Count > 0) {
             Cell currentC = getLowestFCostCell(openList);
-            if (currentC == lastCell)  {
+            if (currentC.X == lastCell.X && currentC.Y == lastCell.Y)  {
                 //Reached final node
                 return CalculatePath(lastCell);
             }
@@ -110,7 +115,11 @@ public class RobotManager : MonoBehaviour
 
             foreach (Cell neighbourCell in GetNeighbourList(currentC))
             {
-                if (closedList.Contains(neighbourCell)) continue;
+                if (closedList.Contains(neighbourCell))
+                {
+                    Debug.Log( "THIS CELL ALREADY EXISTS IN CLOSED LIST : " + neighbourCell.ToString() );
+                    continue;
+                }
                 if (!neighbourCell.IsWalkable()) {
                     closedList.Add(neighbourCell);
                     continue;
@@ -124,11 +133,14 @@ public class RobotManager : MonoBehaviour
                     neighbourCell.CalculateFCost();
 
                     if (!openList.Contains(neighbourCell)) {
+                        Debug.Log( "ADD TO OPEN LIST : " + neighbourCell.ToString() );
                         openList.Add(neighbourCell);
                     }
                 }                
             }
         }
+
+        GridManager.Instance.ResetCosts();
 
         // Out of nodes on the openList
         return null;
