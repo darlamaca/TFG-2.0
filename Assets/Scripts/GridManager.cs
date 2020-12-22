@@ -10,6 +10,8 @@ public class GridManager : MonoBehaviour
     public int MaxGridValue;
     public int MinGridValue;
     private List<Cell> listCell = new List<Cell>();
+    public int GridWidth;
+    public int GridHeight;
 
 
     [SerializeField] private GameObject prefabCell;
@@ -22,7 +24,8 @@ public class GridManager : MonoBehaviour
     
     public void CreateGrid(int x, int y)
     {
-
+        GridHeight = y;
+        GridWidth = x;
         gridLayoutGroup.constraintCount = x;
 
         var totalGridCells = x * y;
@@ -33,6 +36,9 @@ public class GridManager : MonoBehaviour
             newCell.transform.SetParent(this.transform, false);
             newCell.GetComponent<Cell>().X = i/x;
             newCell.GetComponent<Cell>().Y = i%x;
+            newCell.GetComponent<Cell>().SetGCost(int.MaxValue);
+            newCell.GetComponent<Cell>().CalculateFCost();
+            newCell.GetComponent<Cell>().CameFromCell = null;
             listCell.Add(newCell.GetComponent<Cell>());
         }
     }
@@ -71,5 +77,14 @@ public class GridManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void ResetCosts() {
+        var listCount = listCell.Count;
+        for (int i = 0; i < listCount; i++) {
+            listCell[i].SetGCost(int.MaxValue);
+            listCell[i].CalculateFCost();
+            listCell[i].CameFromCell = null;
+        }
     }
 }

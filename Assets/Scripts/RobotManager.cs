@@ -6,6 +6,8 @@ using System;
 public class RobotManager : MonoBehaviour
 {
     public static RobotManager Instance = null;
+    private const int MOVE_STRAIGHT_COST = 10;
+    private const int MOVE_DIAGONAL_COST = 14;
     [SerializeField] private int battery;
     private Cell currentCell;
     private List<Cell> cellPath = new List<Cell>();
@@ -29,7 +31,7 @@ public class RobotManager : MonoBehaviour
             // Buscar camí
             var nextCells = searchPath();
             addCellsToPath(nextCells);
-            currentCell = nextCells[nextCells.Count - 1];
+            if (nextCells != null) currentCell = nextCells[nextCells.Count - 1];
         } 
         StartCoroutine("moveInPath");
     }
@@ -44,7 +46,7 @@ public class RobotManager : MonoBehaviour
 
         var nextRowCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y);
         if(nextRowCell != null) {
-            llista.Add(nextRowCell);
+            llista = searchPathA(currentCell, nextRowCell);
             return llista;
         }
 
@@ -58,7 +60,7 @@ public class RobotManager : MonoBehaviour
 
         var nextColumnCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y + 1);
         if(nextColumnCell != null) {
-            llista.Add(nextColumnCell);
+            llista = searchPathA(currentCell, nextColumnCell);
             return llista;
         }
 
@@ -77,6 +79,9 @@ public class RobotManager : MonoBehaviour
     }
 
     private void addCellsToPath(List<Cell> cells) {
+        if (cells == null) {
+            return;
+        }
         var count = cells.Count;
         for(int i = 0; i < count; i++){
             var cell = cells[i];
@@ -84,5 +89,104 @@ public class RobotManager : MonoBehaviour
             Debug.Log( "Adding Cell to Path: " + cell.ToString() );
             cellPath.Add(cell);
         }
+    }
+
+    private List<Cell> searchPathA(Cell startCell, Cell lastCell) {
+        var openList = new List<Cell> {startCell};
+        var closedList = new List<Cell>();
+        GridManager.Instance.GetCell(startCell.X, startCell.Y).SetGCost(0);
+        GridManager.Instance.GetCell(startCell.X, startCell.Y).SetHCost(calculateDistance(startCell, lastCell));
+        GridManager.Instance.GetCell(startCell.X, startCell.Y).CalculateFCost();
+
+        while (openList.Count > 0) {
+            Cell currentC = getLowestFCostCell(openList);
+            if (currentC == lastCell)  {
+                //Reached final node
+                return CalculatePath(lastCell);
+            }
+
+            openList.Remove(currentC);
+            closedList.Add(currentC);
+
+            foreach (Cell neighbourCell in GetNeighbourList(currentC))
+            {
+                if (closedList.Contains(neighbourCell)) continue;
+                if (!neighbourCell.IsWalkable()) {
+                    closedList.Add(neighbourCell);
+                    continue;
+                }
+
+                int tentativeGCost = currentC.GetGCost() + calculateDistance(currentC, neighbourCell);
+                if (tentativeGCost < neighbourCell.GetGCost()) {
+                    neighbourCell.CameFromCell = currentC;
+                    neighbourCell.SetGCost(tentativeGCost);
+                    neighbourCell.SetHCost(calculateDistance(neighbourCell, lastCell));
+                    neighbourCell.CalculateFCost();
+
+                    if (!openList.Contains(neighbourCell)) {
+                        openList.Add(neighbourCell);
+                    }
+                }                
+            }
+        }
+
+        // Out of nodes on the openList
+        return null;
+    }
+
+    private int calculateDistance(Cell a, Cell b) {
+        int xDistance = Mathf.Abs(a.X - b.X);
+        int yDistance = Mathf.Abs(a.Y - b.Y);
+        int remaining = Mathf.Abs(xDistance - yDistance);
+        return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
+    }
+
+    private Cell getLowestFCostCell(List<Cell> cellsList) {
+        Cell lowestFCostCell = cellsList[0];
+        for ( int i = 1; i < cellsList.Count; i++) {
+            if (cellsList[i].GetFCost() < lowestFCostCell.GetFCost()) {
+                lowestFCostCell = cellsList[i];
+            }
+        }
+        return lowestFCostCell;
+    }
+
+    private List<Cell> CalculatePath(Cell endCell) {
+        List<Cell> path = new List<Cell>();
+        path.Add(endCell);
+        Cell currentCell = endCell;
+        while (currentCell.CameFromCell != null) {
+            path.Add(currentCell.CameFromCell);
+            currentCell = currentCell.CameFromCell;
+        }
+        path.Reverse();
+        return path;
+    }
+
+    private List<Cell> GetNeighbourList(Cell currentC) {
+        List<Cell> neighbourList = new List<Cell>();
+
+        if (currentC.X - 1 >= 0) {
+            // Left
+            neighbourList.Add(GridManager.Instance.GetCell(currentC.X - 1, currentC.Y));
+            // Left Down
+            if (currentC.Y - 1 >= 0) neighbourList.Add(GridManager.Instance.GetCell(currentC.X - 1, currentC.Y - 1));
+            // Left Up
+            if (currentC.Y + 1 < GridManager.Instance.GridHeight) neighbourList.Add(GridManager.Instance.GetCell(currentC.X - 1, currentC.Y + 1));
+        }
+        if (currentC.X + 1 < GridManager.Instance.GridWidth) {
+            // Right
+            neighbourList.Add(GridManager.Instance.GetCell(currentC.X + 1, currentC.Y));
+            // Right Down
+            if (currentC.Y - 1 >= 0) neighbourList.Add(GridManager.Instance.GetCell(currentC.X + 1, currentC.Y - 1));
+            // Right Up
+            if (currentC.Y + 1 < GridManager.Instance.GridHeight) neighbourList.Add(GridManager.Instance.GetCell(currentC.X + 1, currentC.Y + 1));
+        }
+        // Down
+        if (currentC.Y - 1 >= 0) neighbourList.Add(GridManager.Instance.GetCell(currentC.X, currentC.Y - 1));
+        // Up
+        if (currentC.Y + 1 < GridManager.Instance.GridHeight) neighbourList.Add(GridManager.Instance.GetCell(currentC.X, currentC.Y + 1));
+
+        return neighbourList;
     }
 }

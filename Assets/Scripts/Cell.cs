@@ -25,6 +25,7 @@ public class Cell : MonoBehaviour
     private int fCost;
     private bool isRobot;
     private int timesPassed;
+    public Cell CameFromCell;
 
 
     private CellType type = CellType.Floor;
@@ -86,5 +87,29 @@ public class Cell : MonoBehaviour
     public override string ToString()
     {
         return "[" + X + ", " + Y + "]";
+    }
+
+    public void SetGCost(int g) {
+        gCost = g;
+    }
+
+    public int GetGCost() {
+        return gCost;
+    }
+
+    public void CalculateFCost() {
+        fCost = gCost + hCost;
+    }
+
+    public void SetHCost(int h) {
+        hCost = h;
+    }
+
+    public int GetFCost() {
+        return fCost;
+    }
+
+    public bool IsWalkable() {
+        return type == CellType.Floor || type == CellType.Charge;
     }
 }
