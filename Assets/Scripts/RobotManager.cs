@@ -23,42 +23,47 @@ public class RobotManager : MonoBehaviour
     }
  
     public void Clean() {
-        addCellToPath(currentCell);
+        addCellsToPath(new List<Cell>() {currentCell});
         Debug.Log( "---- START SEARCH PATH ----" );
         while(!GridManager.Instance.FinishedCleaning()) {
             // Buscar camí
-            var nextCell = searchPath();
-            addCellToPath(nextCell);
-            currentCell = nextCell;
+            var nextCells = searchPath();
+            addCellsToPath(nextCells);
+            currentCell = nextCells[nextCells.Count - 1];
         } 
         StartCoroutine("moveInPath");
     }
 
-    private Cell searchPath() {
+    private List<Cell> searchPath() {
+        var llista = new List<Cell>();
         var horizontalcell = GridManager.Instance.GetCell(currentCell.X + direction, currentCell.Y);
         if(horizontalcell != null && horizontalcell.GetCellType() != Cell.CellType.Wall && horizontalcell.GetCellType() != Cell.CellType.Obstacle) {
-            return horizontalcell;
+            llista.Add(horizontalcell);
+            return llista;
         }
 
         var nextRowCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y);
         if(nextRowCell != null) {
-            return nextRowCell;
+            llista.Add(nextRowCell);
+            return llista;
         }
 
         direction *= -1;
 
         var verticalcell = GridManager.Instance.GetCell(currentCell.X, currentCell.Y + 1);
         if(verticalcell != null && verticalcell.GetCellType() != Cell.CellType.Wall && verticalcell.GetCellType() != Cell.CellType.Obstacle) {
-            return verticalcell;
+            llista.Add(verticalcell);
+            return llista;
         }
 
         var nextColumnCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y + 1);
         if(nextColumnCell != null) {
-            return nextColumnCell;
+            llista.Add(nextColumnCell);
+            return llista;
         }
 
         Debug.LogError("ERROR: Could not find next cell!!!");
-        return null;
+        return llista;
     }
 
     private IEnumerator moveInPath() {
@@ -71,9 +76,13 @@ public class RobotManager : MonoBehaviour
         yield return null;
     }
 
-    private void addCellToPath(Cell cell) {
-        GridManager.Instance.GetCell(cell.X, cell.Y).IncreaseTimesPassed();
-        Debug.Log( "Adding Cell to Path: " + cell.ToString() );
-        cellPath.Add(cell);
+    private void addCellsToPath(List<Cell> cells) {
+        var count = cells.Count;
+        for(int i = 0; i < count; i++){
+            var cell = cells[i];
+            GridManager.Instance.GetCell(cell.X, cell.Y).IncreaseTimesPassed();
+            Debug.Log( "Adding Cell to Path: " + cell.ToString() );
+            cellPath.Add(cell);
+        }
     }
 }
