@@ -59,9 +59,7 @@ public class GridManager : MonoBehaviour
     }
 
     public Cell GetNextRowCell(int x, int y) {
-        Debug.Log("Searching for uncleaned cells in row Y = " + y);
         var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && (cell.GetCellType() == Cell.CellType.Floor || cell.GetCellType() == Cell.CellType.Charge));
-        Debug.Log("# uncleaned cells in this row: " + allRowCell.Count);
         
         if(allRowCell != null && allRowCell.Count > 0) {
             var cellsCount = allRowCell.Count;

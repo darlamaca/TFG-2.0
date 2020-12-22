@@ -62,7 +62,6 @@ public class Cell : MonoBehaviour
 
     public void SetRobot(bool isRobot) {
         this.isRobot = isRobot;
-        IncreaseTimesPassed();
         UpdateCell();
     }
     
@@ -82,5 +81,10 @@ public class Cell : MonoBehaviour
 
     public CellType GetCellType() {
         return type;
+    }
+
+    public override string ToString()
+    {
+        return "[" + X + ", " + Y + "]";
     }
 }

@@ -8,6 +8,7 @@ public class RobotManager : MonoBehaviour
     public static RobotManager Instance = null;
     [SerializeField] private int battery;
     private Cell currentCell;
+    private List<Cell> cellPath = new List<Cell>();
     private int direction = 1;
 
     private void Awake() {
@@ -18,33 +19,28 @@ public class RobotManager : MonoBehaviour
         if (currentCell != null) currentCell.SetRobot(false);
         currentCell = GridManager.Instance.GetCell(x,y);
         currentCell.SetRobot(true);
-        Debug.Log("Current cell is: " + currentCell.X + ", " + currentCell.Y);
+        Debug.Log( "Robot Moved to Cell: " + currentCell.ToString() );
     }
  
     public void Clean() {
-        if(!GridManager.Instance.FinishedCleaning()) {
-            Debug.Log("Cleaning has not finished!");
+        addCellToPath(currentCell);
+        Debug.Log( "---- START SEARCH PATH ----" );
+        while(!GridManager.Instance.FinishedCleaning()) {
             // Buscar camí
             var nextCell = searchPath();
-            // Moure't
-            IEnumerator coroutine = moveToCell(nextCell);
-            StartCoroutine(coroutine);  
-        } else Debug.Log("Cleaning has finished! Hurray!!!");
+            addCellToPath(nextCell);
+            currentCell = nextCell;
+        } 
+        StartCoroutine("moveInPath");
     }
 
     private Cell searchPath() {
-        Debug.Log("Lets search next cell");
         var horizontalcell = GridManager.Instance.GetCell(currentCell.X + direction, currentCell.Y);
-        if (horizontalcell != null) Debug.Log(String.Format( "Next neighbour horizontal cell: [{0}, {1}] > {2}", horizontalcell.X, horizontalcell.Y, horizontalcell.GetCellType() ) );
-        else Debug.Log("Next neighbour horizontal cell is null");
         if(horizontalcell != null && horizontalcell.GetCellType() != Cell.CellType.Wall && horizontalcell.GetCellType() != Cell.CellType.Obstacle) {
             return horizontalcell;
         }
 
-        // TODO: Fix this
         var nextRowCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y);
-        if (nextRowCell != null) Debug.Log(String.Format( "Next non-neighbour horizontal cell: [{0}, {1}] > {2}", nextRowCell.X, nextRowCell.Y, nextRowCell.GetCellType() ) );
-        else Debug.Log("Next non-neighbour horizontal cell is null");
         if(nextRowCell != null) {
             return nextRowCell;
         }
@@ -52,15 +48,11 @@ public class RobotManager : MonoBehaviour
         direction *= -1;
 
         var verticalcell = GridManager.Instance.GetCell(currentCell.X, currentCell.Y + 1);
-        if (verticalcell != null) Debug.Log(String.Format( "Next neighbour vertical cell: [{0}, {1}] > {2}", verticalcell.X, verticalcell.Y, verticalcell.GetCellType() ) );
-        else Debug.Log("Next neighbour vertical cell is null");
         if(verticalcell != null && verticalcell.GetCellType() != Cell.CellType.Wall && verticalcell.GetCellType() != Cell.CellType.Obstacle) {
             return verticalcell;
         }
 
         var nextColumnCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y + 1);
-        if (nextColumnCell != null) Debug.Log(String.Format( "Next non-neighbour vertical cell: [{0}, {1}] > {2}", nextColumnCell.X, nextColumnCell.Y, nextColumnCell.GetCellType() ) );
-        else Debug.Log("Next non-neighbour vertical cell is null");
         if(nextColumnCell != null) {
             return nextColumnCell;
         }
@@ -69,11 +61,19 @@ public class RobotManager : MonoBehaviour
         return null;
     }
 
-    private IEnumerator moveToCell(Cell nextcell) {
-        if(nextcell != null) {
-            SetRobotTo(nextcell.X, nextcell.Y);
-            yield return new WaitForSeconds(.5f);
+    private IEnumerator moveInPath() {
+        Debug.Log( "---- START MOVE PATH ----" );
+        var count = cellPath.Count;
+        for(int i = 0; i < count; i++) {
+            SetRobotTo(cellPath[i].X, cellPath[i].Y);
+            yield return new WaitForSeconds(1f);
         }
         yield return null;
+    }
+
+    private void addCellToPath(Cell cell) {
+        GridManager.Instance.GetCell(cell.X, cell.Y).IncreaseTimesPassed();
+        Debug.Log( "Adding Cell to Path: " + cell.ToString() );
+        cellPath.Add(cell);
     }
 }
