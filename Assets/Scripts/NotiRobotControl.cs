@@ -19,6 +19,7 @@ public class NotiRobotControl : MonoBehaviour
     }
 
     private void onClickPlay() {
+        GridManager.Instance.Reset();
         RobotManager.Instance.Clean();
     }
 

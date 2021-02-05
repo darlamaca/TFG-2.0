@@ -24,6 +24,7 @@ public class Cell : MonoBehaviour
     private int fCost;
     private bool isRobot;
     private int timesPassed;
+    private int timesPassedShown = 0;
     public Cell CameFromCell;
 
 
@@ -62,6 +63,7 @@ public class Cell : MonoBehaviour
 
     public void SetRobot(bool isRobot) {
         this.isRobot = isRobot;
+        if (isRobot) timesPassedShown++;
         UpdateCell();
     }
     
@@ -70,7 +72,7 @@ public class Cell : MonoBehaviour
         imgBackground.color = colorsByType[(int)type];
         imgRobot.enabled = isRobot;
         tmpPosition.text = ToString();
-        tmpTimesPassed.text = timesPassed.ToString();
+        tmpTimesPassed.text = timesPassedShown.ToString();
     }
 
     public void IncreaseTimesPassed() {
@@ -117,6 +119,7 @@ public class Cell : MonoBehaviour
     public void ResetTimesPassed()
     {
         timesPassed = 0;
+        timesPassedShown = 0;
     }
 
     public void ResetGraphic()
