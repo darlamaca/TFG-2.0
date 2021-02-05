@@ -39,7 +39,7 @@ public class RobotManager : MonoBehaviour
             // Buscar camí
             var nextCells = searchPath();
             addCellsToPath(nextCells);
-            if (nextCells != null) currentCell = nextCells[nextCells.Count - 1];
+            currentCell = nextCells[nextCells.Count - 1];
         } 
         StartCoroutine("moveInPath");
     }
@@ -55,6 +55,7 @@ public class RobotManager : MonoBehaviour
         var nextRowCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y);
         if(nextRowCell != null) {
             llista = searchPathA(currentCell, nextRowCell);
+            llista.RemoveAt(0);
             return llista;
         }
 
@@ -69,6 +70,7 @@ public class RobotManager : MonoBehaviour
         var nextColumnCell = GridManager.Instance.GetNextRowCell(currentCell.X, currentCell.Y + 1);
         if(nextColumnCell != null) {
             llista = searchPathA(currentCell, nextColumnCell);
+            llista.RemoveAt(0);
             return llista;
         }
 
@@ -97,8 +99,12 @@ public class RobotManager : MonoBehaviour
     }
 
     private List<Cell> searchPathA(Cell startCell, Cell lastCell) {
+
         var openList = new List<Cell> {startCell};
         var closedList = new List<Cell>();
+
+        GridManager.Instance.ResetCosts();
+
         GridManager.Instance.GetCell(startCell.X, startCell.Y).SetGCost(0);
         GridManager.Instance.GetCell(startCell.X, startCell.Y).SetHCost(calculateDistance(startCell, lastCell));
         GridManager.Instance.GetCell(startCell.X, startCell.Y).CalculateFCost();
@@ -140,9 +146,8 @@ public class RobotManager : MonoBehaviour
             }
         }
 
-        GridManager.Instance.ResetCosts();
-
         // Out of nodes on the openList
+        Debug.LogError("ERROR: Could not reach " + lastCell.ToString() + " from " + startCell.ToString());
         return null;
     }
 
