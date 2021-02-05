@@ -154,8 +154,7 @@ public class RobotManager : MonoBehaviour
     private int calculateDistance(Cell a, Cell b) {
         int xDistance = Mathf.Abs(a.X - b.X);
         int yDistance = Mathf.Abs(a.Y - b.Y);
-        int remaining = Mathf.Abs(xDistance - yDistance);
-        return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
+        return xDistance + yDistance;
     }
 
     private Cell getLowestFCostCell(List<Cell> cellsList) {
@@ -186,18 +185,10 @@ public class RobotManager : MonoBehaviour
         if (currentC.X - 1 >= 0) {
             // Left
             neighbourList.Add(GridManager.Instance.GetCell(currentC.X - 1, currentC.Y));
-            // Left Down
-            if (currentC.Y - 1 >= 0) neighbourList.Add(GridManager.Instance.GetCell(currentC.X - 1, currentC.Y - 1));
-            // Left Up
-            if (currentC.Y + 1 < GridManager.Instance.GridHeight) neighbourList.Add(GridManager.Instance.GetCell(currentC.X - 1, currentC.Y + 1));
         }
         if (currentC.X + 1 < GridManager.Instance.GridWidth) {
             // Right
             neighbourList.Add(GridManager.Instance.GetCell(currentC.X + 1, currentC.Y));
-            // Right Down
-            if (currentC.Y - 1 >= 0) neighbourList.Add(GridManager.Instance.GetCell(currentC.X + 1, currentC.Y - 1));
-            // Right Up
-            if (currentC.Y + 1 < GridManager.Instance.GridHeight) neighbourList.Add(GridManager.Instance.GetCell(currentC.X + 1, currentC.Y + 1));
         }
         // Down
         if (currentC.Y - 1 >= 0) neighbourList.Add(GridManager.Instance.GetCell(currentC.X, currentC.Y - 1));
