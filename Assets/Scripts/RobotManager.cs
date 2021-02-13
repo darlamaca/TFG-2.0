@@ -11,7 +11,6 @@ public class RobotManager : MonoBehaviour
     [SerializeField] private int battery;
     private Cell currentCell;
     private List<Cell> cellPath = new List<Cell>();
-    private int direction = 1;
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -20,7 +19,6 @@ public class RobotManager : MonoBehaviour
     public void Reset()
     {
         currentCell = cellPath[0];
-        direction = 1;
         cellPath = new List<Cell>();
         SetRobotTo(currentCell.X, currentCell.Y);
     }
@@ -45,10 +43,13 @@ public class RobotManager : MonoBehaviour
     }
 
     private List<Cell> searchPath() {
+        var direction = searchDirection(currentCell);
+        Debug.Log( "Direction : " + direction );
         var llista = new List<Cell>();
         var horizontalcell = GridManager.Instance.GetCell(currentCell.X + direction, currentCell.Y);
-        if(horizontalcell != null && horizontalcell.IsWalkable()) {
+        if(horizontalcell != null && horizontalcell.IsWalkable() && horizontalcell.GetTimesPassed() == 0) {
             llista.Add(horizontalcell);
+            Debug.Log("Move Horizontal: " + horizontalcell.ToString());
             return llista;
         }
 
@@ -56,10 +57,9 @@ public class RobotManager : MonoBehaviour
         if(nextRowCell != null) {
             llista = searchPathA(currentCell, nextRowCell);
             llista.RemoveAt(0);
+            Debug.Log("Move Horizontal A*: " + nextRowCell.ToString());
             return llista;
         }
-
-        direction *= -1;
 
         var verticalcell = GridManager.Instance.GetCell(currentCell.X, currentCell.Y + 1);
         if(verticalcell != null && verticalcell.IsWalkable()) {
@@ -196,5 +196,19 @@ public class RobotManager : MonoBehaviour
         if (currentC.Y + 1 < GridManager.Instance.GridHeight) neighbourList.Add(GridManager.Instance.GetCell(currentC.X, currentC.Y + 1));
 
         return neighbourList;
+    }
+
+    private int searchDirection(Cell celaInici) {
+        var rowCells = GridManager.Instance.GetRowCells(celaInici.Y);
+        Debug.Log("Search direction. Row Count : " + rowCells.Count);
+        var celesDreta = rowCells.FindAll(cell => cell.X > celaInici.X && cell.GetTimesPassed() == 0 && cell.IsWalkable());
+        Debug.Log("Search direction. Right Count : " + celesDreta.Count);
+        var celesEsquerra = rowCells.FindAll(cell => cell.X < celaInici.X && cell.GetTimesPassed() == 0 && cell.IsWalkable());
+        Debug.Log("Search direction. Left Count : " + celesEsquerra.Count);
+        
+        if (celesEsquerra == null || celesEsquerra.Count == 0) return 1;
+        if (celesDreta == null || celesDreta.Count == 0) return -1;
+        if (celesEsquerra.Count >= celesDreta.Count) return 1;
+        else return -1; 
     }
 }

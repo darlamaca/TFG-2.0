@@ -79,6 +79,10 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
+    public List<Cell> GetRowCells(int row) {
+        return listCell.FindAll(cell => cell.Y == row);
+    }
+
     public void ResetCosts() {
         var listCount = listCell.Count;
         for (int i = 0; i < listCount; i++) {
