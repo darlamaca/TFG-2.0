@@ -47,7 +47,7 @@ public class RobotManager : MonoBehaviour
     private List<Cell> searchPath() {
         var llista = new List<Cell>();
         var horizontalcell = GridManager.Instance.GetCell(currentCell.X + direction, currentCell.Y);
-        if(horizontalcell != null && horizontalcell.GetCellType() != Cell.CellType.Wall && horizontalcell.GetCellType() != Cell.CellType.Obstacle) {
+        if(horizontalcell != null && horizontalcell.IsWalkable()) {
             llista.Add(horizontalcell);
             return llista;
         }
@@ -62,7 +62,7 @@ public class RobotManager : MonoBehaviour
         direction *= -1;
 
         var verticalcell = GridManager.Instance.GetCell(currentCell.X, currentCell.Y + 1);
-        if(verticalcell != null && verticalcell.GetCellType() != Cell.CellType.Wall && verticalcell.GetCellType() != Cell.CellType.Obstacle) {
+        if(verticalcell != null && verticalcell.IsWalkable()) {
             llista.Add(verticalcell);
             return llista;
         }

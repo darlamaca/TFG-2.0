@@ -65,7 +65,7 @@ public class GridManager : MonoBehaviour
     }
 
     public Cell GetNextRowCell(int x, int y) {
-        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && (cell.GetCellType() == Cell.CellType.Floor || cell.GetCellType() == Cell.CellType.Charge));
+        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && cell.IsWalkable());
         
         if(allRowCell != null && allRowCell.Count > 0) {
             var cellsCount = allRowCell.Count;
