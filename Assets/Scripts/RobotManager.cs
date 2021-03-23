@@ -9,6 +9,8 @@ public class RobotManager : MonoBehaviour
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
     [SerializeField] private int battery;
+    private const int MAX_BATTERY = 20;
+    private const int LOW_BATTERY = 4;
     private Cell currentCell;
     private List<Cell> cellPath = new List<Cell>();
 
@@ -31,13 +33,29 @@ public class RobotManager : MonoBehaviour
     }
  
     public void Clean() {
+        battery = MAX_BATTERY;
         addCellsToPath(new List<Cell>() {currentCell});
         Debug.Log( "---- START SEARCH PATH ----" );
         while(!GridManager.Instance.FinishedCleaning()) {
             // Buscar camí
-            var nextCells = searchPath();
-            addCellsToPath(nextCells);
-            currentCell = nextCells[nextCells.Count - 1];
+            if(battery <= LOW_BATTERY) {
+                var nearestChargeCell = GridManager.Instance.NearestChargeCell(currentCell);
+                var goChargeCell = searchPathA(currentCell, nearestChargeCell);
+                goChargeCell.RemoveAt(0);
+                addCellsToPath(goChargeCell);
+                battery = MAX_BATTERY;
+                Debug.Log("Battery after charge: " + battery);
+                var comeBack = searchPathA(nearestChargeCell, currentCell);
+                comeBack.RemoveAt(0);
+                addCellsToPath(comeBack);
+                currentCell = comeBack[comeBack.Count - 1];
+            }
+            else {
+                var nextCells = searchPath();
+                addCellsToPath(nextCells);
+                currentCell = nextCells[nextCells.Count - 1];
+            }
+            
         } 
         StartCoroutine("moveInPath");
     }
@@ -47,7 +65,7 @@ public class RobotManager : MonoBehaviour
         Debug.Log( "Direction : " + direction );
         var llista = new List<Cell>();
         var horizontalcell = GridManager.Instance.GetCell(currentCell.X + direction, currentCell.Y);
-        if(horizontalcell != null && horizontalcell.IsWalkable() && horizontalcell.GetTimesPassed() == 0) {
+        if(horizontalcell != null && horizontalcell.GetCellType() == Cell.CellType.Floor && horizontalcell.GetTimesPassed() == 0) {
             llista.Add(horizontalcell);
             Debug.Log("Move Horizontal: " + horizontalcell.ToString());
             return llista;
@@ -62,7 +80,7 @@ public class RobotManager : MonoBehaviour
         }
 
         var verticalcell = GridManager.Instance.GetCell(currentCell.X, currentCell.Y + 1);
-        if(verticalcell != null && verticalcell.IsWalkable()) {
+        if(verticalcell != null && verticalcell.GetCellType() == Cell.CellType.Floor) {
             llista.Add(verticalcell);
             return llista;
         }
@@ -90,6 +108,8 @@ public class RobotManager : MonoBehaviour
 
     private void addCellsToPath(List<Cell> cells) {
         var count = cells.Count;
+        battery = battery - count;
+        Debug.Log("Current battery: " + battery);
         for(int i = 0; i < count; i++){
             var cell = cells[i];
             GridManager.Instance.GetCell(cell.X, cell.Y).IncreaseTimesPassed();
@@ -201,9 +221,9 @@ public class RobotManager : MonoBehaviour
     private int searchDirection(Cell celaInici) {
         var rowCells = GridManager.Instance.GetRowCells(celaInici.Y);
         Debug.Log("Search direction. Row Count : " + rowCells.Count);
-        var celesDreta = rowCells.FindAll(cell => cell.X > celaInici.X && cell.GetTimesPassed() == 0 && cell.IsWalkable());
+        var celesDreta = rowCells.FindAll(cell => cell.X > celaInici.X && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor);
         Debug.Log("Search direction. Right Count : " + celesDreta.Count);
-        var celesEsquerra = rowCells.FindAll(cell => cell.X < celaInici.X && cell.GetTimesPassed() == 0 && cell.IsWalkable());
+        var celesEsquerra = rowCells.FindAll(cell => cell.X < celaInici.X && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor);
         Debug.Log("Search direction. Left Count : " + celesEsquerra.Count);
         
         if (celesEsquerra == null || celesEsquerra.Count == 0) return 1;

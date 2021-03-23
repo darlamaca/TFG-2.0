@@ -65,7 +65,7 @@ public class GridManager : MonoBehaviour
     }
 
     public Cell GetNextRowCell(int x, int y) {
-        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && cell.IsWalkable());
+        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor);
         
         if(allRowCell != null && allRowCell.Count > 0) {
             var cellsCount = allRowCell.Count;
@@ -102,5 +102,22 @@ public class GridManager : MonoBehaviour
             listCell[i].ResetTimesPassed();
             listCell[i].ResetGraphic();            
         }
+    }
+
+    public Cell NearestChargeCell(Cell currentCell) {
+        var allChargeCells = listCell.FindAll(cell => cell.GetCellType() == Cell.CellType.Charge);
+        Cell nearestChargeCell = allChargeCells[0];
+        for (int i = 1; i < allChargeCells.Count; i++) {
+            int xDistancei = Mathf.Abs(currentCell.X - allChargeCells[i].X);
+            int yDistancei = Mathf.Abs(currentCell.Y - allChargeCells[i].Y);
+            int distanciai = xDistancei + yDistancei;
+            int xDistancen = Mathf.Abs(currentCell.X - nearestChargeCell.X);
+            int yDistancen = Mathf.Abs(currentCell.Y - nearestChargeCell.Y);
+            int distancian = xDistancen + yDistancen;
+            if (distanciai < distancian) {
+                nearestChargeCell = allChargeCells[i];
+            }
+        }
+        return nearestChargeCell;
     }
 }
