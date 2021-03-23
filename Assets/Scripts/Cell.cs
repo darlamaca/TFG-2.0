@@ -8,13 +8,16 @@ using TMPro;
 public class Cell : MonoBehaviour
 {
     public enum CellType { Floor, Wall, Obstacle, Charge }
+    public enum RoomType { A, B, C }
     
     [SerializeField] private Color[] colorsByType;
     
     [SerializeField] private Image imgBackground;
     [SerializeField] private Image imgRobot;
     [SerializeField] private TextMeshProUGUI tmpPosition;
+    [SerializeField] private TextMeshProUGUI tmpRoomType;
     [SerializeField] private TextMeshProUGUI tmpTimesPassed;
+    [SerializeField] private TextMeshProUGUI tmpBattery;
     [SerializeField] private Button btnChangeType;
 
     public int X;
@@ -29,6 +32,7 @@ public class Cell : MonoBehaviour
 
 
     private CellType type = CellType.Floor;
+    private RoomType room = RoomType.A;
 
     private void Start()
     {
@@ -41,6 +45,10 @@ public class Cell : MonoBehaviour
         switch (state) {
             case NotiEditCells.State.Edit:{
                 changeCellType();
+                break;
+            }
+            case NotiEditCells.State.Room:{
+                changeRoomType();
                 break;
             }
             case NotiEditCells.State.Rob:{
@@ -61,6 +69,17 @@ public class Cell : MonoBehaviour
         UpdateCell();
     }
 
+    private void changeRoomType()
+    {
+        var roomsCount = Enum.GetNames(typeof(RoomType)).Length;
+        int nextRoom = (int)room + 1;
+        if (nextRoom == roomsCount) nextRoom = 0;
+
+        room = (RoomType)Enum.GetValues(typeof(RoomType)).GetValue(nextRoom);
+
+        UpdateCell();
+    }
+
     public void SetRobot(bool isRobot) {
         this.isRobot = isRobot;
         if (isRobot) timesPassedShown++;
@@ -71,7 +90,10 @@ public class Cell : MonoBehaviour
     {
         imgBackground.color = colorsByType[(int)type];
         imgRobot.enabled = isRobot;
-        tmpPosition.text = ToString();
+        tmpBattery.enabled = isRobot;
+        tmpBattery.text = RobotManager.Instance.battery.ToString();
+        tmpPosition.text = this.ToString();
+        tmpRoomType.text = room.ToString();
         tmpTimesPassed.text = timesPassedShown.ToString();
     }
 
@@ -85,6 +107,10 @@ public class Cell : MonoBehaviour
 
     public CellType GetCellType() {
         return type;
+    }
+
+    public RoomType GetRoomType() {
+        return room;
     }
 
     public override string ToString()

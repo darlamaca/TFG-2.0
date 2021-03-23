@@ -64,8 +64,12 @@ public class GridManager : MonoBehaviour
         return listCell.Find(cell => cell.GetCellType() == Cell.CellType.Floor && cell.GetTimesPassed() == 0) == null;
     }
 
-    public Cell GetNextRowCell(int x, int y) {
-        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor);
+    public bool RoomCleaned(Cell.RoomType roomtype) {
+        return listCell.Find(cell => cell.GetRoomType() == roomtype && cell.GetCellType() == Cell.CellType.Floor && cell.GetTimesPassed() == 0 ) == null;
+    }
+
+    public Cell GetNextRowCell(int x, int y, Cell.RoomType roomtype) {
+        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor && cell.GetRoomType() == roomtype);
         
         if(allRowCell != null && allRowCell.Count > 0) {
             var cellsCount = allRowCell.Count;
@@ -119,5 +123,16 @@ public class GridManager : MonoBehaviour
             }
         }
         return nearestChargeCell;
+    }
+
+    public Cell StartCell(Cell.RoomType roomtype) {
+        var celesRoom = listCell.FindAll(cell => cell.GetRoomType() == roomtype && cell.GetCellType() == Cell.CellType.Floor);
+        Cell startCell = celesRoom[0];
+        for (int i = 1; i < celesRoom.Count; i++) {
+            if(celesRoom[i].X <= startCell.X && celesRoom[i].Y <= startCell.Y) {
+                startCell = celesRoom[i];
+            }
+        }
+        return startCell;
     }
 }
