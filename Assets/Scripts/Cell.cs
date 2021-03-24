@@ -82,7 +82,11 @@ public class Cell : MonoBehaviour
 
     public void SetRobot(bool isRobot) {
         this.isRobot = isRobot;
-        if (isRobot) timesPassedShown++;
+        if (isRobot) {
+            timesPassedShown++;
+            if(type == CellType.Charge) RobotManager.Instance.batteryshown = RobotManager.MAX_BATTERY;
+            else RobotManager.Instance.batteryshown --;
+        }
         UpdateCell();
     }
     
@@ -91,7 +95,7 @@ public class Cell : MonoBehaviour
         imgBackground.color = colorsByType[(int)type];
         imgRobot.enabled = isRobot;
         tmpBattery.enabled = isRobot;
-        tmpBattery.text = RobotManager.Instance.battery.ToString();
+        tmpBattery.text = RobotManager.Instance.batteryshown.ToString();
         tmpPosition.text = this.ToString();
         tmpRoomType.text = room.ToString();
         tmpTimesPassed.text = timesPassedShown.ToString();

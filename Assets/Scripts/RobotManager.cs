@@ -8,8 +8,9 @@ public class RobotManager : MonoBehaviour
     public static RobotManager Instance = null;
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
-    public int battery;
-    private const int MAX_BATTERY = 20;
+    private int battery;
+    public int batteryshown;
+    public const int MAX_BATTERY = 20;
     private const int LOW_BATTERY = 4;
     private Cell currentCell;
     private List<Cell> cellPath = new List<Cell>();
@@ -34,6 +35,7 @@ public class RobotManager : MonoBehaviour
 
     public void Clean() {
         battery = MAX_BATTERY;
+        batteryshown = battery + 1;
         Debug.Log("---- START CLEANING ----");
         var room = currentCell.GetRoomType();
         addCellsToPath(new List<Cell>() {currentCell});
