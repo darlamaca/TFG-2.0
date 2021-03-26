@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class GridManager : MonoBehaviour
 {
@@ -61,15 +62,15 @@ public class GridManager : MonoBehaviour
     }
 
     public bool FinishedCleaning() {
-        return listCell.Find(cell => cell.GetCellType() == Cell.CellType.Floor && cell.GetTimesPassed() == 0) == null;
+        return listCell.Find(cell => cell.GetCellType() == Cell.CellType.Floor && cell.GetDirtLevel() > cell.GetTimesPassed()) == null;
     }
 
     public bool RoomCleaned(Cell.RoomType roomtype) {
-        return listCell.Find(cell => cell.GetRoomType() == roomtype && cell.GetCellType() == Cell.CellType.Floor && cell.GetTimesPassed() == 0 ) == null;
+        return listCell.Find(cell => cell.GetRoomType() == roomtype && cell.GetCellType() == Cell.CellType.Floor && cell.GetDirtLevel() > cell.GetTimesPassed()) == null;
     }
 
     public Cell GetNextRowCell(int x, int y, Cell.RoomType roomtype) {
-        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor && cell.GetRoomType() == roomtype);
+        var allRowCell = listCell.FindAll(cell => cell.Y == y && cell.GetDirtLevel() > cell.GetTimesPassed() && cell.GetCellType() == Cell.CellType.Floor && cell.GetRoomType() == roomtype);
         
         if(allRowCell != null && allRowCell.Count > 0) {
             var cellsCount = allRowCell.Count;
@@ -134,5 +135,10 @@ public class GridManager : MonoBehaviour
             }
         }
         return startCell;
+    }
+
+    public int GetRoomCount()
+    {
+        return listCell.Select(cell => cell.GetRoomType()).Distinct().Count();
     }
 }

@@ -11,6 +11,8 @@ public class Cell : MonoBehaviour
     public enum RoomType { A, B, C }
     
     [SerializeField] private Color[] colorsByType;
+    [SerializeField] private Color[] colorsByDirt;
+
     
     [SerializeField] private Image imgBackground;
     [SerializeField] private Image imgRobot;
@@ -28,6 +30,7 @@ public class Cell : MonoBehaviour
     private bool isRobot;
     private int timesPassed;
     private int timesPassedShown = 0;
+    private int dirtLevel = 0;
     public Cell CameFromCell;
 
 
@@ -49,6 +52,10 @@ public class Cell : MonoBehaviour
             }
             case NotiEditCells.State.Room:{
                 changeRoomType();
+                break;
+            }
+            case NotiEditCells.State.Dirt:{
+                changeDirtLevel();
                 break;
             }
             case NotiEditCells.State.Rob:{
@@ -80,6 +87,15 @@ public class Cell : MonoBehaviour
         UpdateCell();
     }
 
+    private void changeDirtLevel() {
+
+        int nextDirtLevel = dirtLevel + 1;
+        if (nextDirtLevel == 3) nextDirtLevel = 0;
+
+        dirtLevel = nextDirtLevel;
+        UpdateCell();
+    }
+
     public void SetRobot(bool isRobot) {
         this.isRobot = isRobot;
         if (isRobot) {
@@ -92,13 +108,14 @@ public class Cell : MonoBehaviour
     
     public void UpdateCell()
     {
-        imgBackground.color = colorsByType[(int)type];
         imgRobot.enabled = isRobot;
         tmpBattery.enabled = isRobot;
         tmpBattery.text = RobotManager.Instance.batteryshown.ToString();
         tmpPosition.text = this.ToString();
         tmpRoomType.text = room.ToString();
         tmpTimesPassed.text = timesPassedShown.ToString();
+        if(type == CellType.Floor) imgBackground.color = colorsByDirt[Math.Max(dirtLevel - timesPassedShown, 0)];
+        else imgBackground.color = colorsByType[(int)type];
     }
 
     public void IncreaseTimesPassed() {
@@ -107,6 +124,10 @@ public class Cell : MonoBehaviour
 
     public int GetTimesPassed() {
         return timesPassed;
+    }
+
+    public int GetDirtLevel() {
+        return dirtLevel;
     }
 
     public CellType GetCellType() {

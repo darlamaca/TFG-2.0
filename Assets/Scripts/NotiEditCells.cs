@@ -13,10 +13,11 @@ public class NotiEditCells : MonoBehaviour
 
     private const string strEdit = "Fixar mapa";
     private const string strRoom = "Fixar sales";
+    private const string strDirt = "Fixar bruticia";
     private const string strRob = "Fixar robot";
     private const string strFix = "Editar mapa";
     private State state = State.Edit;
-    public enum State {Edit, Room, Rob, Fix};
+    public enum State {Edit, Room, Dirt, Rob, Fix};
     public event Action<State> OnUpdateState;
 
     private void Start() 
@@ -37,7 +38,7 @@ public class NotiEditCells : MonoBehaviour
     }
 
     private void updateState() {
-        GridManager.Instance.ToggleButtons(state == State.Edit || state == State.Room || state == State.Rob);
+        GridManager.Instance.ToggleButtons(state == State.Edit || state == State.Room || state == State.Dirt || state == State.Rob);
         OnUpdateState?.Invoke(state);
         switch (state) {
             case State.Edit:{
@@ -46,6 +47,10 @@ public class NotiEditCells : MonoBehaviour
             }
             case State.Room:{
                 tmpBody.text = strRoom;
+                break;
+            }
+            case State.Dirt:{
+                tmpBody.text = strDirt;
                 break;
             }
             case State.Rob:{

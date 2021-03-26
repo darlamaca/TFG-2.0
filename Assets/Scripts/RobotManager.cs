@@ -43,7 +43,7 @@ public class RobotManager : MonoBehaviour
             Debug.Log("Start cleaning:" + room.ToString());
             // Començar sala
             CleanRoom(room);
-            if((int) room < 2) {
+            if((int) room < (GridManager.Instance.GetRoomCount() - 1)) {
                 room = room + 1;
             }
         } 
@@ -75,7 +75,7 @@ public class RobotManager : MonoBehaviour
             }
             
         }
-        if((int) roomtype < 2) {
+        if((int) roomtype < (GridManager.Instance.GetRoomCount() - 1)) {
             var nextRoomStartCell = GridManager.Instance.StartCell(roomtype + 1);
             Debug.Log("nextRoomStartCell: " + nextRoomStartCell);
             var nextCellsToNextRoom = searchPathA(currentCell, nextRoomStartCell);
@@ -92,8 +92,13 @@ public class RobotManager : MonoBehaviour
         var direction = searchDirection(currentCell, roomtype);
         Debug.Log( "Direction : " + direction );
         var llista = new List<Cell>();
+        if(currentCell.GetDirtLevel() > currentCell.GetTimesPassed()) {
+            llista.Add(currentCell);
+            Debug.Log("Em quedo netejant la mateixa cela");
+            return llista;
+        }
         var horizontalcell = GridManager.Instance.GetCell(currentCell.X + direction, currentCell.Y);
-        if(horizontalcell != null && horizontalcell.GetCellType() == Cell.CellType.Floor && horizontalcell.GetRoomType() == roomtype && horizontalcell.GetTimesPassed() == 0) {
+        if(horizontalcell != null && horizontalcell.GetCellType() == Cell.CellType.Floor && horizontalcell.GetRoomType() == roomtype && horizontalcell.GetDirtLevel() > horizontalcell.GetTimesPassed()) {
             llista.Add(horizontalcell);
             Debug.Log("Move Horizontal: " + horizontalcell.ToString());
             return llista;
@@ -108,7 +113,7 @@ public class RobotManager : MonoBehaviour
         }
 
         var verticalcell = GridManager.Instance.GetCell(currentCell.X, currentCell.Y + 1);
-        if(verticalcell != null && verticalcell.GetCellType() == Cell.CellType.Floor && verticalcell.GetRoomType() == roomtype) {
+        if(verticalcell != null && verticalcell.GetCellType() == Cell.CellType.Floor && verticalcell.GetRoomType() == roomtype && verticalcell.GetDirtLevel() > verticalcell.GetTimesPassed()) {
             llista.Add(verticalcell);
             return llista;
         }
@@ -249,9 +254,9 @@ public class RobotManager : MonoBehaviour
     private int searchDirection(Cell celaInici, Cell.RoomType roomtype) {
         var rowCells = GridManager.Instance.GetRowCells(celaInici.Y);
         Debug.Log("Search direction. Row Count : " + rowCells.Count);
-        var celesDreta = rowCells.FindAll(cell => cell.X > celaInici.X && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor && cell.GetRoomType() == roomtype);
+        var celesDreta = rowCells.FindAll(cell => cell.X > celaInici.X && cell.GetDirtLevel() > cell.GetTimesPassed() && cell.GetCellType() == Cell.CellType.Floor && cell.GetRoomType() == roomtype);
         Debug.Log("Search direction. Right Count : " + celesDreta.Count);
-        var celesEsquerra = rowCells.FindAll(cell => cell.X < celaInici.X && cell.GetTimesPassed() == 0 && cell.GetCellType() == Cell.CellType.Floor && cell.GetRoomType() == roomtype);
+        var celesEsquerra = rowCells.FindAll(cell => cell.X < celaInici.X && cell.GetDirtLevel() > cell.GetTimesPassed() && cell.GetCellType() == Cell.CellType.Floor && cell.GetRoomType() == roomtype);
         Debug.Log("Search direction. Left Count : " + celesEsquerra.Count);
         
         if (celesEsquerra == null || celesEsquerra.Count == 0) return 1;
