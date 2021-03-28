@@ -64,6 +64,14 @@ public class RobotManager : MonoBehaviour
                 Debug.Log("Battery after charge: " + battery);                
                 var comeBack = searchPathA(nearestChargeCell, currentCell);
                 comeBack.RemoveAt(0);
+                for(int i = comeBack.Count - 1; i>= 0; i--) {
+                    if (comeBack[i].GetTimesPassed() < comeBack[i].GetDirtLevel()) {
+                        if(i<comeBack.Count - 1) {
+                            comeBack.RemoveRange(i + 1, comeBack.Count - i - 1);
+                        }
+                        break;
+                    }
+                }
                 addCellsToPath(comeBack);
                 currentCell = comeBack[comeBack.Count - 1];
             }
