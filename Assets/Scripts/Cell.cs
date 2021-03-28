@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Newtonsoft.Json;
 
 public class Cell : MonoBehaviour
-{
+{    
     public enum CellType { Floor, Wall, Obstacle, Charge }
     public enum RoomType { A, B, C }
-    
+
     [SerializeField] private Color[] colorsByType;
     [SerializeField] private Color[] colorsByDirt;
 
@@ -22,20 +23,15 @@ public class Cell : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tmpBattery;
     [SerializeField] private Button btnChangeType;
 
-    public int X;
-    public int Y;
+    public CellData Data = new CellData();
+    public int X { get { return Data.X; } set { Data.X = value; } }
+    public int Y { get { return Data.Y; } set { Data.Y = value; } }
     private int gCost;
     private int hCost;
     private int fCost;
-    private bool isRobot;
     private int timesPassed;
     private int timesPassedShown = 0;
-    private int dirtLevel = 0;
     public Cell CameFromCell;
-
-
-    private CellType type = CellType.Floor;
-    private RoomType room = RoomType.A;
 
     private void Start()
     {
@@ -68,10 +64,10 @@ public class Cell : MonoBehaviour
     private void changeCellType()
     {
         var typesCount = Enum.GetNames(typeof(CellType)).Length;
-        int nextType = (int)type + 1;
+        int nextType = (int)Data.type + 1;
         if (nextType == typesCount) nextType = 0;
 
-        type = (CellType)Enum.GetValues(typeof(CellType)).GetValue(nextType);
+        Data.type = (CellType)Enum.GetValues(typeof(CellType)).GetValue(nextType);
 
         UpdateCell();
     }
@@ -79,28 +75,28 @@ public class Cell : MonoBehaviour
     private void changeRoomType()
     {
         var roomsCount = Enum.GetNames(typeof(RoomType)).Length;
-        int nextRoom = (int)room + 1;
+        int nextRoom = (int)Data.room + 1;
         if (nextRoom == roomsCount) nextRoom = 0;
 
-        room = (RoomType)Enum.GetValues(typeof(RoomType)).GetValue(nextRoom);
+        Data.room = (RoomType)Enum.GetValues(typeof(RoomType)).GetValue(nextRoom);
 
         UpdateCell();
     }
 
     private void changeDirtLevel() {
 
-        int nextDirtLevel = dirtLevel + 1;
+        int nextDirtLevel = Data.dirtLevel + 1;
         if (nextDirtLevel == 3) nextDirtLevel = 0;
 
-        dirtLevel = nextDirtLevel;
+        Data.dirtLevel = nextDirtLevel;
         UpdateCell();
     }
 
     public void SetRobot(bool isRobot) {
-        this.isRobot = isRobot;
+        Data.isRobot = isRobot;
         if (isRobot) {
             timesPassedShown++;
-            if(type == CellType.Charge) RobotManager.Instance.batteryshown = RobotManager.MAX_BATTERY;
+            if(Data.type == CellType.Charge) RobotManager.Instance.batteryshown = RobotManager.MAX_BATTERY;
             else RobotManager.Instance.batteryshown --;
         }
         UpdateCell();
@@ -108,14 +104,14 @@ public class Cell : MonoBehaviour
     
     public void UpdateCell()
     {
-        imgRobot.enabled = isRobot;
-        tmpBattery.enabled = isRobot;
+        imgRobot.enabled = Data.isRobot;
+        tmpBattery.enabled = Data.isRobot;
         tmpBattery.text = RobotManager.Instance.batteryshown.ToString();
         tmpPosition.text = this.ToString();
-        tmpRoomType.text = room.ToString();
+        tmpRoomType.text = Data.room.ToString();
         tmpTimesPassed.text = timesPassedShown.ToString();
-        if(type == CellType.Floor) imgBackground.color = colorsByDirt[Math.Max(dirtLevel - timesPassedShown, 0)];
-        else imgBackground.color = colorsByType[(int)type];
+        if(Data.type == CellType.Floor) imgBackground.color = colorsByDirt[Math.Max(Data.dirtLevel - timesPassedShown, 0)];
+        else imgBackground.color = colorsByType[(int)Data.type];
     }
 
     public void IncreaseTimesPassed() {
@@ -127,15 +123,15 @@ public class Cell : MonoBehaviour
     }
 
     public int GetDirtLevel() {
-        return dirtLevel;
+        return Data.dirtLevel;
     }
 
     public CellType GetCellType() {
-        return type;
+        return Data.type;
     }
 
     public RoomType GetRoomType() {
-        return room;
+        return Data.room;
     }
 
     public override string ToString()
@@ -164,7 +160,7 @@ public class Cell : MonoBehaviour
     }
 
     public bool IsWalkable() {
-        return type == CellType.Floor || type == CellType.Charge;
+        return Data.type == CellType.Floor || Data.type == CellType.Charge;
     }
 
     public void ResetTimesPassed()
@@ -175,7 +171,7 @@ public class Cell : MonoBehaviour
 
     public void ResetGraphic()
     {
-        isRobot = false;
+        Data.isRobot = false;
         UpdateCell();
     }
 }

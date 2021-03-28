@@ -20,6 +20,7 @@ public class NotiRobotControl : MonoBehaviour
 
     private void onClickPlay() {
         GridManager.Instance.Reset();
+        Debug.Log(GridManager.Instance.GetListCellJson());
         RobotManager.Instance.Clean();
     }
 

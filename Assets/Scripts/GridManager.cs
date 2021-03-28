@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
+
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance = null;
@@ -13,7 +14,6 @@ public class GridManager : MonoBehaviour
     private List<Cell> listCell = new List<Cell>();
     public int GridWidth;
     public int GridHeight;
-
 
     [SerializeField] private GameObject prefabCell;
     [SerializeField] private GridLayoutGroup gridLayoutGroup;
@@ -42,6 +42,37 @@ public class GridManager : MonoBehaviour
             newCell.GetComponent<Cell>().CameFromCell = null;
             listCell.Add(newCell.GetComponent<Cell>());
         }
+
+    }
+
+    public void ImportGrid(string gridJson)
+    {
+        var cellsData = CellData.FromJson(gridJson);
+
+        GridHeight = cellsData[cellsData.Length   - 1].Y + 1;
+        GridWidth = cellsData[cellsData.Length  - 1].X + 1;
+        gridLayoutGroup.constraintCount = GridWidth;
+
+        for (int i = 0; i < cellsData.Length ; i++)
+        {
+            GameObject newCell = Instantiate(prefabCell);
+            newCell.transform.SetParent(this.transform, false);
+            newCell.GetComponent<Cell>().Data = cellsData[i];
+            newCell.GetComponent<Cell>().SetGCost(int.MaxValue);
+            newCell.GetComponent<Cell>().CalculateFCost();
+            newCell.GetComponent<Cell>().CameFromCell = null;
+            listCell.Add(newCell.GetComponent<Cell>());
+        }
+
+        for (int i = 0; i < listCell.Count(); i++)
+        {
+            listCell[i].UpdateCell();
+        }
+    }
+
+    public string GetListCellJson()
+    {
+        return SerializeCells.ToJson(listCell.Select(cell => cell.Data).ToArray());
     }
 
     public void ToggleButtons(bool isEdit)
