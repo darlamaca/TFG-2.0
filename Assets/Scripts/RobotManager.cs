@@ -61,7 +61,6 @@ public class RobotManager : MonoBehaviour
                 var goChargeCell = searchPathA(currentCell, nearestChargeCell);
                 goChargeCell.RemoveAt(0);
                 addCellsToPath(goChargeCell);
-                battery = MAX_BATTERY;
                 Debug.Log("Battery after charge: " + battery);                
                 var comeBack = searchPathA(nearestChargeCell, currentCell);
                 comeBack.RemoveAt(0);
@@ -145,6 +144,7 @@ public class RobotManager : MonoBehaviour
         Debug.Log("Current battery: " + battery);
         for(int i = 0; i < count; i++){
             var cell = cells[i];
+            if(cell.GetCellType() == Cell.CellType.Charge) battery = MAX_BATTERY;
             GridManager.Instance.GetCell(cell.X, cell.Y).IncreaseTimesPassed();
             Debug.Log( "Adding Cell to Path: " + cell.ToString() );
             cellPath.Add(cell);
