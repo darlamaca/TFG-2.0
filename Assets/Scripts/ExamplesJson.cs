@@ -15,6 +15,6 @@ public static class ExamplesJson
     {
     // 4x4
     "4x4",
-    "El prefe de la Cristina. 8x8 - 2Charge - 3 sales - Obstacles",
+    "8x8 - 2Charge - 3 sales - Obstacles",
     };
 }

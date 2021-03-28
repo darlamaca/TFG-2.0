@@ -26,8 +26,7 @@ public class NotiGridSize : MonoBehaviour
         if (xIsNumber && yIsNumber && isValid(x) && isValid(y))
         {
             Hide();
-            //GridManager.Instance.CreateGrid(x, y);
-            GridManager.Instance.ImportGrid(ExamplesJson.Escenaris[1]);
+            GridManager.Instance.CreateGrid(x, y);
         }
         else
         {
