@@ -69,7 +69,7 @@ public class RobotManager : MonoBehaviour
                 var comeBack = searchPathA(nearestChargeCell, currentCell);
                 comeBack.RemoveAt(0);
                 for(int i = comeBack.Count - 1; i>= 0; i--) {
-                    if (comeBack[i].GetTimesPassed() < comeBack[i].GetDirtLevel()) {
+                    if (comeBack[i].GetTimesPassed() < comeBack[i].GetDirtLevel() && GridManager.Instance.LowerCellsClean(comeBack[i].Y)) {
                         if(i<comeBack.Count - 1) {
                             comeBack.RemoveRange(i + 1, comeBack.Count - i - 1);
                         }

@@ -119,6 +119,10 @@ public class GridManager : MonoBehaviour
         return listCell.FindAll(cell => cell.Y == row);
     }
 
+    public bool LowerCellsClean(int y) {
+        return listCell.Find(cell => cell.Y < y && cell.GetCellType() == Cell.CellType.Floor && cell.GetDirtLevel() > cell.GetTimesPassed()) == null;
+    }
+
     public void ResetCosts() {
         var listCount = listCell.Count;
         for (int i = 0; i < listCount; i++) {
