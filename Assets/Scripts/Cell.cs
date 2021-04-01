@@ -55,6 +55,7 @@ public class Cell : MonoBehaviour
                 break;
             }
             case NotiEditCells.State.Rob:{
+                RobotManager.Instance.ResetBattery();
                 RobotManager.Instance.SetRobotTo(X,Y);
                 break;
             }

@@ -33,9 +33,13 @@ public class RobotManager : MonoBehaviour
         Debug.Log( "Robot Moved to Cell: " + currentCell.ToString() );
     }
 
-    public void Clean() {
+    public void ResetBattery() {
         battery = MAX_BATTERY;
-        batteryshown = battery + 1;
+        batteryshown = battery +1 ;
+    }
+
+    public void Clean() {
+        ResetBattery();
         Debug.Log("---- START CLEANING ----");
         var room = currentCell.GetRoomType();
         addCellsToPath(new List<Cell>() {currentCell});
