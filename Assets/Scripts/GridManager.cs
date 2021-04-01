@@ -49,8 +49,8 @@ public class GridManager : MonoBehaviour
     {
         var cellsData = CellData.FromJson(gridJson);
 
-        GridHeight = cellsData[cellsData.Length   - 1].Y + 1;
-        GridWidth = cellsData[cellsData.Length  - 1].X + 1;
+        GridHeight = cellsData[cellsData.Length - 1].X + 1;
+        GridWidth = cellsData[cellsData.Length - 1].Y + 1;
         gridLayoutGroup.constraintCount = GridWidth;
 
         for (int i = 0; i < cellsData.Length ; i++)
