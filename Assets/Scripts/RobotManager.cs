@@ -10,8 +10,8 @@ public class RobotManager : MonoBehaviour
     private const int MOVE_DIAGONAL_COST = 14;
     private int battery;
     public int batteryshown;
-    public const int MAX_BATTERY = 20;
-    private const int LOW_BATTERY = 4;
+    public const int MAX_BATTERY = 32;
+    private const int LOW_BATTERY = 8;
     private Cell currentCell;
     private List<Cell> cellPath = new List<Cell>();
 
